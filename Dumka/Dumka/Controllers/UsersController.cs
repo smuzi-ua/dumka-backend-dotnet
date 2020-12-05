@@ -6,6 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Dumka;
+using Dumka.Models.Auth;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Configuration;
+using System.Text;
+using Dumka.Services;
 
 namespace Dumka.Controllers
 {
@@ -14,10 +21,33 @@ namespace Dumka.Controllers
     public class UsersController : ControllerBase
     {
         private readonly DumkaDbContext _context;
+        private readonly IConfiguration _configuration;
+        private readonly AuthService _authService;
 
-        public UsersController(DumkaDbContext context)
+        public UsersController(DumkaDbContext context, IConfiguration configuration,
+                               AuthService authService)
         {
             _context = context;
+            _configuration = configuration;
+            _authService = authService;
+        }
+
+        [HttpPost("/token")]
+        public async Task<IActionResult> Token([FromBody]LoginDto loginDto)
+        {
+            var identityTuple = await _authService.GetIdentity(loginDto);
+            if (identityTuple == null)
+            {
+                return Forbid();
+            }
+            if (identityTuple.Item2 != null || identityTuple.Item1 == null)
+            {
+                return BadRequest(new { errorText = identityTuple.Item2 });
+            }
+            var identity = identityTuple.Item1;
+            var response = _authService.CreateJwtToken(identity);
+
+            return new JsonResult(response);
         }
 
         // GET: api/Users
