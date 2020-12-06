@@ -76,8 +76,8 @@ namespace Dumka.Services
                 };
 
                 var userType = await _dbContext.UserTypes.FirstOrDefaultAsync(_ =>
-                    _.Id == loginDto.UserTypeId || _.Name == loginDto.Name);
-                if (loginDto.UserTypeId != null && loginDto.UserType != null &&
+                    _.Id == loginDto.UserTypeId || _.Name == loginDto.UserType);
+                if ((loginDto.UserTypeId != null || loginDto.UserType != null) &&
                     userType == null)
                 {
                     return new Tuple<UserDto, string>(
@@ -99,7 +99,7 @@ namespace Dumka.Services
                 {
                     userType = new UserTypes
                     {
-                        Id = 0
+                        Id = 1
                     };
                 }
                 user.UserTypeId = userType.Id;

@@ -19,7 +19,7 @@ namespace Dumka
         public int SchoolId { get; set; }
         public string Name { get; set; }
         public string Nickname { get; set; }
-        public long? Code { get; set; }
+        public decimal? Code { get; set; }
         public DateTime? CodeGenerated { get; set; }
         public int UserTypeId { get; set; }
         public DateTime? BannedTo { get; set; }

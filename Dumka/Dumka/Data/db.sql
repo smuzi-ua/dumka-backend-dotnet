@@ -23,7 +23,7 @@ add	  date_created	datetime		default CURRENT_TIMESTAMP	not null,
 create table user_types
 (
 	id		int IDENTITY(1,1)				primary key,
-	name	char(10)			not null
+	name	varchar(10)			not null
 )
 
 INSERT INTO user_types (name)
@@ -35,7 +35,7 @@ create table users
     school_id      int                                                                               not null,
     name           varchar(128)                                                                      not null,
     nickname       varchar(32)                                                                       not null,
-    code           int(6)                                    default(floor(rand() * 900000 + 100000)) null,
+    code           numberic(6)                               default(floor(rand() * 900000 + 100000)) null,
     code_generated datetime                                  default CURRENT_TIMESTAMP				 null,
     user_type_id   int										 default 0								 not null,
     banned_to      datetime                                                                          null,
@@ -55,7 +55,7 @@ add	  date_created	datetime		default CURRENT_TIMESTAMP	not null,
 create table proposal_deadline_types
 (
 	id		int IDENTITY(1,1)				primary key,
-	name	char(5)			not null
+	name	varchar(5)			not null
 )
 
 INSERT INTO proposal_deadline_types (name)
@@ -64,7 +64,7 @@ VALUES ('day'), ('2day'), ('week'), ('month')
 create table proposal_stage_types
 (
 	id		int IDENTITY(1,1)				primary key,
-	name	char(11)			not null
+	name	varchar(11)			not null
 )
 
 INSERT INTO proposal_stage_types (name)
@@ -107,7 +107,7 @@ create table comments
 create table feedback_type
 (
 	id		int IDENTITY(1,1)				primary key,
-	name	char(7)			not null
+	name	varchar(7)			not null
 )
 
 INSERT INTO feedback_types (name)

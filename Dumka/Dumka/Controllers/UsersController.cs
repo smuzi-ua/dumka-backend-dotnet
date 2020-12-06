@@ -13,6 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 using Dumka.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Dumka.Controllers
 {
@@ -32,7 +33,8 @@ namespace Dumka.Controllers
             _authService = authService;
         }
 
-        [HttpPost("/token")]
+        [AllowAnonymous]
+        [HttpPost("token")]
         public async Task<IActionResult> Token([FromBody]LoginDto loginDto)
         {
             var identityTuple = await _authService.GetIdentity(loginDto);
