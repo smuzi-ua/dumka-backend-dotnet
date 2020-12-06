@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Dumka.Models.Auth
 {
-    public class UserDto
+    public class AuthUserDto
     {
         public string Nickname { get; set; }
         public int UserId { get; set; }

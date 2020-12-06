@@ -14,23 +14,28 @@ using Microsoft.Extensions.Configuration;
 using System.Text;
 using Dumka.Services;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using Dumka.Models.DTO;
 
 namespace Dumka.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly DumkaDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly AuthService _authService;
+        private readonly IMapper _mapper;
 
         public UsersController(DumkaDbContext context, IConfiguration configuration,
-                               AuthService authService)
+                               AuthService authService, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
             _authService = authService;
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -54,23 +59,47 @@ namespace Dumka.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<IActionResult> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            int? schoolId = _authService.GetSchoolId(User.Claims);
+            if (schoolId == null)
+            {
+                return BadRequest();
+            }
+            var users = await _context.Users.Include(_ => _.UserType)
+                .Include(_ => _.School)
+                .Include(_ => _.Proposals)
+                .Include(_ => _.Comments)
+                .Where(_ => _.SchoolId == schoolId.Value)
+                .ToListAsync();
+            IEnumerable<UserInfoDto> userInfos = users.Select(_ => _mapper.Map<UserInfoDto>(_));
+            return new JsonResult(userInfos);
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUsers(int id)
+        public async Task<IActionResult> GetUsers(int id)
         {
-            var users = await _context.Users.FindAsync(id);
+            int? schoolId = _authService.GetSchoolId(User.Claims);
+            if (schoolId == null)
+            {
+                return BadRequest();
+            }
+            var user = await _context.Users.Include(_ => _.UserType)
+                .Include(_ => _.School)
+                .Include(_ => _.Proposals)
+                .Include(_ => _.Comments)
+                .FirstOrDefaultAsync(_ => _.Id == id);
 
-            if (users == null)
+            if (user == null)
             {
                 return NotFound();
             }
-
-            return users;
+            if (user.SchoolId != schoolId)
+            {
+                return Forbid();
+            }
+            return new JsonResult(_mapper.Map<UserInfoDto>(user));
         }
 
         // PUT: api/Users/5

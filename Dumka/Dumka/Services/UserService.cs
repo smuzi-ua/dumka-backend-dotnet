@@ -16,12 +16,12 @@ namespace Dumka.Services
             _dbContext = dbContext;
         }
 
-        public async Task<Tuple<UserDto, string>> CheckOrCreate(LoginDto loginDto)
+        public async Task<Tuple<AuthUserDto, string>> CheckOrCreate(LoginDto loginDto)
         {
             var isSchoolExist = await _dbContext.Schools.AnyAsync(_ => _.Id == loginDto.SchoolId);
             if (!isSchoolExist)
             {
-                return new Tuple<UserDto, string>(
+                return new Tuple<AuthUserDto, string>(
                     null,
                     "School doesn't exist"
                 );
@@ -37,7 +37,7 @@ namespace Dumka.Services
                 if ((loginDto.UserTypeId != null && loginDto.UserTypeId != user.UserTypeId) ||
                     (loginDto.UserType != null && loginDto.UserType != user.UserType.Name))
                 {
-                    return new Tuple<UserDto, string>(
+                    return new Tuple<AuthUserDto, string>(
                         null,
                         "User role is incorrect"
                     );
@@ -49,8 +49,8 @@ namespace Dumka.Services
                     _dbContext.Update(user);
                     await _dbContext.SaveChangesAsync();
                 }
-                return new Tuple<UserDto, string>(
-                    new UserDto
+                return new Tuple<AuthUserDto, string>(
+                    new AuthUserDto
                     {
                         UserId = user.Id,
                         Nickname = user.Nickname,
@@ -79,7 +79,7 @@ namespace Dumka.Services
                 if ((loginDto.UserTypeId != null || loginDto.UserType != null) &&
                     userType == null)
                 {
-                    return new Tuple<UserDto, string>(
+                    return new Tuple<AuthUserDto, string>(
                         null,
                         "User type not found"
                     );
@@ -88,7 +88,7 @@ namespace Dumka.Services
                 {
                     if (userType.Id != loginDto.UserTypeId || userType.Name != loginDto.UserType)
                     {
-                        return new Tuple<UserDto, string>(
+                        return new Tuple<AuthUserDto, string>(
                             null,
                             "User type is inconsistent"
                         );
@@ -104,8 +104,8 @@ namespace Dumka.Services
                 user.UserTypeId = userType.Id;
                 _dbContext.Add(user);
                 await _dbContext.SaveChangesAsync();
-                return new Tuple<UserDto, string>(
-                    new UserDto
+                return new Tuple<AuthUserDto, string>(
+                    new AuthUserDto
                     {
                         UserId = user.Id,
                         Nickname = user.Nickname,

@@ -114,7 +114,7 @@ namespace Dumka.Controllers
             }
             else
             {
-                return await PutSchools(schoolDto.Id,  schoolDto);
+                return await PutSchools(schoolDto.Id, schoolDto);
             }
         }
 
@@ -137,7 +137,7 @@ namespace Dumka.Controllers
             _context.Schools.Remove(school);
             await _context.SaveChangesAsync();
 
-            return new JsonResult(school);
+            return new JsonResult(_mapper.Map<SchoolDto>(school));
         }
     }
 }
