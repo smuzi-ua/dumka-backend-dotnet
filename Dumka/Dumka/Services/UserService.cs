@@ -27,8 +27,7 @@ namespace Dumka.Services
                 );
             }
             var user = await _dbContext.Users.Include(_ => _.UserType)
-                    .FirstOrDefaultAsync(_ => _.Nickname == loginDto.Nickname &&
-                                    _.SchoolId == loginDto.SchoolId);
+                    .FirstOrDefaultAsync(_ => _.Nickname == loginDto.Nickname);
             if (user != null)
             {
                 if (user.Code != loginDto.Code)

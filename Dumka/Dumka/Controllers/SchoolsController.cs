@@ -122,11 +122,17 @@ namespace Dumka.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSchools(int id)
         {
-            var school = await _context.Schools.FindAsync(id);
+            var school = await _context.Schools.Include(_ => _.Users)
+                .FirstOrDefaultAsync(_ => _.Id == id);
             if (school == null)
             {
                 return NotFound();
             }
+
+            if (school.Users != null && school.Users.Any())
+            {
+                return BadRequest(new { errorText = "Delete related entities before." });
+             }
 
             _context.Schools.Remove(school);
             await _context.SaveChangesAsync();
