@@ -15,19 +15,19 @@ namespace Dumka
         {
         }
 
-        public virtual DbSet<CommentLikes> CommentLikes { get; set; }
-        public virtual DbSet<CommentReports> CommentReports { get; set; }
-        public virtual DbSet<Comments> Comments { get; set; }
-        public virtual DbSet<FeedbackTypes> FeedbackTypes { get; set; }
-        public virtual DbSet<ProposalDeadlineTypes> ProposalDeadlineTypes { get; set; }
-        public virtual DbSet<ProposalLikes> ProposalLikes { get; set; }
-        public virtual DbSet<ProposalReports> ProposalReports { get; set; }
+        public virtual DbSet<CommentLike> CommentLikes { get; set; }
+        public virtual DbSet<CommentReport> CommentReports { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<FeedbackType> FeedbackTypes { get; set; }
+        public virtual DbSet<ProposalDeadlineType> ProposalDeadlineTypes { get; set; }
+        public virtual DbSet<ProposalLike> ProposalLikes { get; set; }
+        public virtual DbSet<ProposalReport> ProposalReports { get; set; }
         public virtual DbSet<ProposalStageTypes> ProposalStageTypes { get; set; }
-        public virtual DbSet<Proposals> Proposals { get; set; }
-        public virtual DbSet<ReportCategories> ReportCategories { get; set; }
-        public virtual DbSet<Schools> Schools { get; set; }
-        public virtual DbSet<UserTypes> UserTypes { get; set; }
-        public virtual DbSet<Users> Users { get; set; }
+        public virtual DbSet<Proposal> Proposals { get; set; }
+        public virtual DbSet<ReportCategory> ReportCategories { get; set; }
+        public virtual DbSet<School> Schools { get; set; }
+        public virtual DbSet<UserType> UserTypes { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -42,7 +42,7 @@ namespace Dumka
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
-            modelBuilder.Entity<CommentLikes>(entity =>
+            modelBuilder.Entity<CommentLike>(entity =>
             {
                 entity.ToTable("comment_likes");
 
@@ -83,7 +83,7 @@ namespace Dumka
                     .HasConstraintName("comment_likes_users_id_fk");
             });
 
-            modelBuilder.Entity<CommentReports>(entity =>
+            modelBuilder.Entity<CommentReport>(entity =>
             {
                 entity.ToTable("comment_reports");
 
@@ -128,7 +128,7 @@ namespace Dumka
                     .HasConstraintName("comment_reports_users_id_fk");
             });
 
-            modelBuilder.Entity<Comments>(entity =>
+            modelBuilder.Entity<Comment>(entity =>
             {
                 entity.ToTable("comments");
 
@@ -136,7 +136,7 @@ namespace Dumka
 
                 entity.Property(e => e.Anonymous).HasColumnName("anonymous");
 
-                entity.Property(e => e.Comment)
+                entity.Property(e => e.CommentStr)
                     .IsRequired()
                     .HasColumnName("comment")
                     .HasColumnType("text");
@@ -168,7 +168,7 @@ namespace Dumka
                     .HasConstraintName("comments_users_id_fk");
             });
 
-            modelBuilder.Entity<FeedbackTypes>(entity =>
+            modelBuilder.Entity<FeedbackType>(entity =>
             {
                 entity.ToTable("feedback_types");
 
@@ -181,7 +181,7 @@ namespace Dumka
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<ProposalDeadlineTypes>(entity =>
+            modelBuilder.Entity<ProposalDeadlineType>(entity =>
             {
                 entity.ToTable("proposal_deadline_types");
 
@@ -194,7 +194,7 @@ namespace Dumka
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<ProposalLikes>(entity =>
+            modelBuilder.Entity<ProposalLike>(entity =>
             {
                 entity.ToTable("proposal_likes");
 
@@ -235,7 +235,7 @@ namespace Dumka
                     .HasConstraintName("proposal_likes_users_id_fk");
             });
 
-            modelBuilder.Entity<ProposalReports>(entity =>
+            modelBuilder.Entity<ProposalReport>(entity =>
             {
                 entity.ToTable("proposal_reports");
 
@@ -293,7 +293,7 @@ namespace Dumka
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<Proposals>(entity =>
+            modelBuilder.Entity<Proposal>(entity =>
             {
                 entity.ToTable("proposals");
 
@@ -347,7 +347,7 @@ namespace Dumka
                     .HasConstraintName("proposals_users_id_fk");
             });
 
-            modelBuilder.Entity<ReportCategories>(entity =>
+            modelBuilder.Entity<ReportCategory>(entity =>
             {
                 entity.ToTable("report_categories");
 
@@ -370,7 +370,7 @@ namespace Dumka
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<Schools>(entity =>
+            modelBuilder.Entity<School>(entity =>
             {
                 entity.ToTable("schools");
 
@@ -398,7 +398,7 @@ namespace Dumka
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<UserTypes>(entity =>
+            modelBuilder.Entity<UserType>(entity =>
             {
                 entity.ToTable("user_types");
 
@@ -411,7 +411,7 @@ namespace Dumka
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<Users>(entity =>
+            modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("users");
 

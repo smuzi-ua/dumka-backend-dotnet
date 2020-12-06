@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 namespace Dumka
 {
-    public partial class UserTypes
+    public partial class UserType
     {
-        public UserTypes()
+        public UserType()
         {
-            Users = new HashSet<Users>();
+            Users = new HashSet<User>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public virtual ICollection<Users> Users { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }

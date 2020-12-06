@@ -54,14 +54,14 @@ namespace Dumka.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Users>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Users>> GetUsers(int id)
+        public async Task<ActionResult<User>> GetUsers(int id)
         {
             var users = await _context.Users.FindAsync(id);
 
@@ -75,7 +75,7 @@ namespace Dumka.Controllers
 
         // PUT: api/Users/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsers(int id, Users users)
+        public async Task<IActionResult> PutUsers(int id, User users)
         {
             if (id != users.Id)
             {
@@ -105,7 +105,7 @@ namespace Dumka.Controllers
 
         // POST: api/Users
         [HttpPost]
-        public async Task<ActionResult<Users>> PostUsers(Users users)
+        public async Task<ActionResult<User>> PostUsers(User users)
         {
             _context.Users.Add(users);
             await _context.SaveChangesAsync();
@@ -115,7 +115,7 @@ namespace Dumka.Controllers
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Users>> DeleteUsers(int id)
+        public async Task<ActionResult<User>> DeleteUsers(int id)
         {
             var users = await _context.Users.FindAsync(id);
             if (users == null)

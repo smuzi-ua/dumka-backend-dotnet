@@ -64,7 +64,7 @@ namespace Dumka.Services
             }
             else
             {
-                user = new Users
+                user = new User
                 {
                     Name = loginDto.Name,
                     Nickname = loginDto.Nickname,
@@ -97,7 +97,7 @@ namespace Dumka.Services
                 }
                 if (userType == null)
                 {
-                    userType = new UserTypes
+                    userType = new UserType
                     {
                         Id = 1
                     };

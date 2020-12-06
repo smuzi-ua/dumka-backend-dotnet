@@ -22,14 +22,14 @@ namespace Dumka.Controllers
 
         // GET: api/Comments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Comments>>> GetComments()
+        public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
         {
             return await _context.Comments.ToListAsync();
         }
 
         // GET: api/Comments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Comments>> GetComments(int id)
+        public async Task<ActionResult<Comment>> GetComments(int id)
         {
             var comments = await _context.Comments.FindAsync(id);
 
@@ -43,7 +43,7 @@ namespace Dumka.Controllers
 
         // PUT: api/Comments/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutComments(int id, Comments comments)
+        public async Task<IActionResult> PutComments(int id, Comment comments)
         {
             if (id != comments.Id)
             {
@@ -73,7 +73,7 @@ namespace Dumka.Controllers
 
         // POST: api/Comments
         [HttpPost]
-        public async Task<ActionResult<Comments>> PostComments(Comments comments)
+        public async Task<ActionResult<Comment>> PostComments(Comment comments)
         {
             _context.Comments.Add(comments);
             await _context.SaveChangesAsync();
@@ -83,7 +83,7 @@ namespace Dumka.Controllers
 
         // DELETE: api/Comments/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Comments>> DeleteComments(int id)
+        public async Task<ActionResult<Comment>> DeleteComments(int id)
         {
             var comments = await _context.Comments.FindAsync(id);
             if (comments == null)

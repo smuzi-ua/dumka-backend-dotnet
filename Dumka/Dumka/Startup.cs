@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using Dumka.Data;
 using Dumka.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -49,6 +51,7 @@ namespace Dumka
             services.AddScoped<AuthService>();
             services.AddDbContext<DumkaDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddAutoMapper(typeof(DumkaProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

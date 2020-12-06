@@ -22,14 +22,14 @@ namespace Dumka.Controllers
 
         // GET: api/Proposals
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Proposals>>> GetProposals()
+        public async Task<ActionResult<IEnumerable<Proposal>>> GetProposals()
         {
             return await _context.Proposals.ToListAsync();
         }
 
         // GET: api/Proposals/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Proposals>> GetProposals(int id)
+        public async Task<ActionResult<Proposal>> GetProposals(int id)
         {
             var proposals = await _context.Proposals.FindAsync(id);
 
@@ -43,7 +43,7 @@ namespace Dumka.Controllers
 
         // PUT: api/Proposals/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProposals(int id, Proposals proposals)
+        public async Task<IActionResult> PutProposals(int id, Proposal proposals)
         {
             if (id != proposals.Id)
             {
@@ -73,7 +73,7 @@ namespace Dumka.Controllers
 
         // POST: api/Proposals
         [HttpPost]
-        public async Task<ActionResult<Proposals>> PostProposals(Proposals proposals)
+        public async Task<ActionResult<Proposal>> PostProposals(Proposal proposals)
         {
             _context.Proposals.Add(proposals);
             await _context.SaveChangesAsync();
@@ -83,7 +83,7 @@ namespace Dumka.Controllers
 
         // DELETE: api/Proposals/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Proposals>> DeleteProposals(int id)
+        public async Task<ActionResult<Proposal>> DeleteProposals(int id)
         {
             var proposals = await _context.Proposals.FindAsync(id);
             if (proposals == null)

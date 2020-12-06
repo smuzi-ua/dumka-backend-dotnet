@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Dumka
 {
-    public partial class Schools
+    public partial class School
     {
-        public Schools()
+        public School()
         {
-            Users = new HashSet<Users>();
+            Users = new HashSet<User>();
         }
 
         public int Id { get; set; }
@@ -16,6 +16,6 @@ namespace Dumka
         public DateTime DateCreated { get; set; }
         public DateTime DateModified { get; set; }
 
-        public virtual ICollection<Users> Users { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }
