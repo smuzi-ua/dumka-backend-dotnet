@@ -21,6 +21,14 @@ namespace Dumka.Data
                 .ForMember(userDto => userDto.UserType, opt => opt.MapFrom(src => src.UserType.Name))
                 .ForMember(userDto => userDto.ProposalsCount, opt => opt.MapFrom(src => src.Proposals.Count()))
                 .ForMember(userDto => userDto.CommentsCount, opt => opt.MapFrom(src => src.Comments.Count()));
+
+            CreateMap<Proposal, ProposalDto>()
+                .ForMember(proposalDto => proposalDto.UserNickname, opt => opt.MapFrom(src => src.User.Nickname))
+                .ForMember(proposalDto => proposalDto.Stage, opt => opt.MapFrom(src => src.Stage.Name))
+                .ForMember(proposalDto => proposalDto.Deadline, opt => opt.MapFrom(src => src.Deadline.Name))
+                .ForMember(proposalDto => proposalDto.LikesCount, opt => opt.MapFrom(src => src.ProposalLikes.Count(_ => _.FeedbackId == 1)))
+                .ForMember(proposalDto => proposalDto.DislikesCount, opt => opt.MapFrom(src => src.ProposalLikes.Count(_ => _.FeedbackId == 2)))
+                .ForMember(proposalDto => proposalDto.CommentsCount, opt => opt.MapFrom(src => src.Comments.Count()));
         }
     }
 }

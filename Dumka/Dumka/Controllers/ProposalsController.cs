@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Dumka;
+using AutoMapper;
+using Dumka.Services;
+using Dumka.Models.DTO;
 
 namespace Dumka.Controllers
 {
@@ -14,31 +17,63 @@ namespace Dumka.Controllers
     public class ProposalsController : ControllerBase
     {
         private readonly DumkaDbContext _context;
+        private readonly AuthService _authService;
+        private readonly IMapper _mapper;
 
-        public ProposalsController(DumkaDbContext context)
+        public ProposalsController(DumkaDbContext context, AuthService authService,
+                                   IMapper mapper)
         {
             _context = context;
+            _authService = authService;
+            _mapper = mapper;
         }
 
         // GET: api/Proposals
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Proposal>>> GetProposals()
+        public async Task<IActionResult> GetProposals()
         {
-            return await _context.Proposals.ToListAsync();
+            int? schoolId = _authService.GetSchoolId(User.Claims);
+            if (schoolId == null)
+            {
+                return BadRequest();
+            }
+            var proposals = await _context.Proposals
+                .Include(_ => _.User)
+                .Include(_ => _.Stage)
+                .Include(_ => _.Deadline)
+                .Include(_ => _.ProposalLikes)
+                .Include(_ => _.Comments)
+                .Where(_ => _.User.SchoolId == schoolId)
+                .ToListAsync();
+            IEnumerable<ProposalDto> proposalDtos = proposals.Select(_ => _mapper.Map<ProposalDto>(_));
+            return new JsonResult(proposalDtos);
         }
 
         // GET: api/Proposals/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Proposal>> GetProposals(int id)
+        public async Task<IActionResult> GetProposals(int id)
         {
-            var proposals = await _context.Proposals.FindAsync(id);
-
-            if (proposals == null)
+            int? schoolId = _authService.GetSchoolId(User.Claims);
+            if (schoolId == null)
+            {
+                return BadRequest();
+            }
+            var proposal = await _context.Proposals
+                .Include(_ => _.User)
+                .Include(_ => _.Stage)
+                .Include(_ => _.Deadline)
+                .Include(_ => _.ProposalLikes)
+                .Include(_ => _.Comments)
+                .FirstOrDefaultAsync(_ => _.Id == id);
+            if (proposal == null)
             {
                 return NotFound();
             }
-
-            return proposals;
+            if (proposal.User.SchoolId != schoolId)
+            {
+                return Forbid();
+            }
+            return new JsonResult(_mapper.Map<ProposalDto>(proposal));
         }
 
         // PUT: api/Proposals/5
