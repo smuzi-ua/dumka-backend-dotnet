@@ -9,6 +9,7 @@ using Dumka;
 using AutoMapper;
 using Dumka.Services;
 using Dumka.Models.DTO;
+using Dumka.Data;
 
 namespace Dumka.Controllers
 {
@@ -18,13 +19,15 @@ namespace Dumka.Controllers
     {
         private readonly DumkaDbContext _context;
         private readonly AuthService _authService;
+        private readonly ProposalService _proposalService;
         private readonly IMapper _mapper;
 
         public ProposalsController(DumkaDbContext context, AuthService authService,
-                                   IMapper mapper)
+                                   ProposalService proposalService, IMapper mapper)
         {
             _context = context;
             _authService = authService;
+            _proposalService = proposalService;
             _mapper = mapper;
         }
 
@@ -37,6 +40,11 @@ namespace Dumka.Controllers
             {
                 return BadRequest();
             }
+            int? userId = _authService.GetUserId(User.Claims);
+            if (userId == null)
+            {
+                return BadRequest();
+            }
             var proposals = await _context.Proposals
                 .Include(_ => _.User)
                 .Include(_ => _.Stage)
@@ -45,7 +53,10 @@ namespace Dumka.Controllers
                 .Include(_ => _.Comments)
                 .Where(_ => _.User.SchoolId == schoolId)
                 .ToListAsync();
-            IEnumerable<ProposalDto> proposalDtos = proposals.Select(_ => _mapper.Map<ProposalDto>(_));
+            IEnumerable<ProposalInfoDto> proposalDtos = proposals.Select(_ => _mapper.Map<ProposalInfoDto>(_, opt => {
+                opt.Items[DumkaAutomapperConstants.IsForDisplayingInList] = true;
+                opt.Items[DumkaAutomapperConstants.CurrentUserId] = userId;
+            }));
             return new JsonResult(proposalDtos);
         }
 
@@ -55,6 +66,11 @@ namespace Dumka.Controllers
         {
             int? schoolId = _authService.GetSchoolId(User.Claims);
             if (schoolId == null)
+            {
+                return BadRequest();
+            }
+            int? userId = _authService.GetUserId(User.Claims);
+            if (userId == null)
             {
                 return BadRequest();
             }
@@ -73,47 +89,58 @@ namespace Dumka.Controllers
             {
                 return Forbid();
             }
-            return new JsonResult(_mapper.Map<ProposalDto>(proposal));
+            return new JsonResult(_mapper.Map<ProposalInfoDto>(proposal, opt => {
+                opt.Items[DumkaAutomapperConstants.CurrentUserId] = userId;
+            }));
         }
 
         // PUT: api/Proposals/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProposals(int id, Proposal proposals)
+        public async Task<IActionResult> PutProposals(int id, ProposalDto proposalDto)
         {
-            if (id != proposals.Id)
+            if (proposalDto.Id == 0)
+            {
+                proposalDto.Id = id;
+            }
+            if (id != proposalDto.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(proposals).State = EntityState.Modified;
-
-            try
+            var proposalTuple = await _proposalService.UpdateProposal(proposalDto);
+            if (proposalTuple.Item2 != null)
             {
-                await _context.SaveChangesAsync();
+                return new JsonResult(new { errors = proposalTuple.Item2 });
             }
-            catch (DbUpdateConcurrencyException)
+            if (proposalTuple.Item1 == null)
             {
-                if (!ProposalsExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
-
-            return NoContent();
+            
+            return RedirectToAction("GetProposals", new { id = proposalDto.Id });
         }
 
         // POST: api/Proposals
         [HttpPost]
-        public async Task<ActionResult<Proposal>> PostProposals(Proposal proposals)
+        public async Task<IActionResult> PostProposals(ProposalDto proposalDto)
         {
-            _context.Proposals.Add(proposals);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetProposals", new { id = proposals.Id }, proposals);
+            if (proposalDto.Id == 0)
+            {
+                var proposalTuple = await _proposalService.CreateProposal(proposalDto);
+                if (proposalTuple.Item2 != null)
+                {
+                    return new JsonResult(new { errors = proposalTuple.Item2 });
+                }
+                if (proposalTuple.Item1 == null)
+                {
+                    return Forbid();
+                }
+                return CreatedAtAction("GetProposals", new { id = proposalTuple.Item1.Id }, _mapper.Map<ProposalInfoDto>(proposalTuple.Item1));
+            }
+            else
+            {
+                return await PutProposals(proposalDto.Id, proposalDto);
+            }
         }
 
         // DELETE: api/Proposals/5

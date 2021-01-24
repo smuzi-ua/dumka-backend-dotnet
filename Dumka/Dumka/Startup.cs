@@ -49,6 +49,7 @@ namespace Dumka
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<UserService>();
             services.AddScoped<AuthService>();
+            services.AddScoped<ProposalService>();
             services.AddDbContext<DumkaDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAutoMapper(typeof(DumkaProfile));
